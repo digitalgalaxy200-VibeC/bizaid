@@ -4,6 +4,10 @@
  * Uses credentials provider (email + password).
  * Passwords are hashed with bcrypt.
  * Session contains tenantId so server components can resolve the right DB.
+ *
+ * `trustHost` is required when the deployment host is not the same as
+ * NEXTAUTH_URL (Vercel preview URLs, LAN IPs, 127.0.0.1 vs localhost).
+ * Without it NextAuth throws UntrustedHost during sign-in.
  */
 
 import NextAuth from "next-auth";
@@ -19,6 +23,7 @@ const LoginSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   pages: {
     signIn: "/auth/login",
     error: "/auth/login",
