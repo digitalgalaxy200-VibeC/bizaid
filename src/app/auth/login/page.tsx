@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { loginAction } from "./actions";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { PasswordInput } from "@/components/PasswordInput";
 
 export default function LoginPage() {
   const [errorMessage, formAction, isPending] = useActionState(loginAction, undefined);
@@ -74,11 +75,11 @@ export default function LoginPage() {
                     Password
                   </label>
                 </div>
-                <input
-                  type="password"
+                <PasswordInput
                   name="password"
                   required
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   className="w-full rounded-xl border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                 />
               </div>
