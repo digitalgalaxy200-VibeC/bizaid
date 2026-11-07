@@ -6,6 +6,7 @@
  * - User memberships
  * - Agent (AI assistant) registry
  * - Tenant database registry (where each tenant's DB lives)
+ * - Platform admins (cross-tenant WΛIDE° staff)
  * - Subscription / plan info
  */
 
@@ -78,3 +79,14 @@ export const agentRegistry = sqliteTable("agent_registry", {
   tenantIdx: index("agent_registry_tenant_idx").on(t.tenantId),
   slugIdx: index("agent_registry_slug_idx").on(t.slug),
 }));
+
+// ------------------------------------------------------------
+// Platform Admins — WΛIDE° staff with cross-tenant access
+// ------------------------------------------------------------
+// Membership is explicit (not a boolean on users) so grants can be
+// audited and revoked independently of the account itself.
+export const platformAdmins = sqliteTable("platform_admins", {
+  userId: text("user_id").primaryKey().references(() => users.id),
+  grantedAt: integer("granted_at", { mode: "timestamp" }).notNull(),
+  grantedBy: text("granted_by"),           // who granted access (email or "bootstrap")
+});

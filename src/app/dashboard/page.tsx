@@ -3,8 +3,12 @@
  * Business owner home after login.
  */
 import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth/config";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth();
+  const isPlatformAdmin = (session as any)?.isPlatformAdmin === true;
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -23,6 +27,9 @@ export default function DashboardPage() {
           <QuickLink href="/dashboard/conversations" title="Conversations" desc="View and manage customer chats" />
           <QuickLink href="/dashboard/knowledge" title="Knowledge Base" desc="Manage what your AI knows" />
           <QuickLink href="/dashboard/settings" title="Settings" desc="Update your business profile" />
+          {isPlatformAdmin && (
+            <QuickLink href="/admin" title="Platform Admin" desc="Every business on this deployment" />
+          )}
         </div>
       </div>
     </div>

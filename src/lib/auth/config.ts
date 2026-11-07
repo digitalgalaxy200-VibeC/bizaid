@@ -11,7 +11,7 @@ import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { controlDb } from "@/lib/db/control";
-import { users, memberships, tenants, agentRegistry } from "../../../drizzle/schema/control";
+import { users, memberships, tenants, agentRegistry, platformAdmins } from "../../../drizzle/schema/control";
 
 const LoginSchema = z.object({
   email: z.string().email(),
@@ -31,6 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.tenantId = (user as any).tenantId;
         token.tenantSlug = (user as any).tenantSlug;
         token.tenantName = (user as any).tenantName;
+        token.isPlatformAdmin = (user as any).isPlatformAdmin === true;
       }
       return token;
     },
@@ -39,6 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       (session as any).tenantId = token.tenantId;
       (session as any).tenantSlug = token.tenantSlug;
       (session as any).tenantName = token.tenantName;
+      (session as any).isPlatformAdmin = token.isPlatformAdmin === true;
       return session;
     },
   },
@@ -81,6 +83,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           .where(eq(memberships.userId, user.id))
           .get();
 
+        // Cross-tenant access is granted explicitly in platform_admins.
+        // Captured in the JWT at sign-in; revoking requires a re-login.
+        const adminGrant = await controlDb
+          .select({ userId: platformAdmins.userId })
+          .from(platformAdmins)
+          .where(eq(platformAdmins.userId, user.id))
+          .get();
+
         return {
           id: user.id,
           email: user.email,
@@ -88,6 +98,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           tenantId: membership?.tenantId ?? null,
           tenantSlug: membership?.tenantSlug ?? null,
           tenantName: membership?.tenantName ?? null,
+          isPlatformAdmin: Boolean(adminGrant),
         };
       },
     }),
