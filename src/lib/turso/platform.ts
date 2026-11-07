@@ -31,21 +31,27 @@ type PlatformConfig = {
 };
 
 export function isTenantProvisioningConfigured(): boolean {
-  return Boolean(process.env.TURSO_API_TOKEN && process.env.TURSO_ORG_NAME);
+  return !isPlaceholder(process.env.TURSO_API_TOKEN) && !isPlaceholder(process.env.TURSO_ORG_NAME);
+}
+
+/** Treat empty and template values ("your-org", "changeme", ...) as unset. */
+function isPlaceholder(value: string | undefined): boolean {
+  if (!value || value.trim().length === 0) return true;
+  return /^(your[-_]|placeholder|changeme|xxxx)/i.test(value.trim());
 }
 
 function getConfig(): PlatformConfig {
   const token = process.env.TURSO_API_TOKEN;
   const org = process.env.TURSO_ORG_NAME;
 
-  if (!token) {
+  if (isPlaceholder(token)) {
     throw new TursoApiError(500, "TURSO_API_TOKEN is not set");
   }
-  if (!org) {
+  if (isPlaceholder(org)) {
     throw new TursoApiError(500, "TURSO_ORG_NAME is not set");
   }
 
-  return { token, org, group: process.env.TURSO_DB_GROUP || "default" };
+  return { token: token as string, org: org as string, group: process.env.TURSO_DB_GROUP || "default" };
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
