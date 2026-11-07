@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -33,7 +34,6 @@ export default function SignupPage() {
         throw new Error(data.error || "Failed to create account");
       }
 
-      // Auto sign-in after registration
       const signinRes = await signIn("credentials", {
         redirect: false,
         email: formData.email,
@@ -54,85 +54,94 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h1 className="text-center text-3xl font-extrabold text-waide-900 tracking-tight">WΛIDE°</h1>
-        <h2 className="mt-2 text-center text-xl font-semibold text-gray-700">
-          Create your AI workforce account
-        </h2>
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0c0d12] text-slate-900 dark:text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative selection:bg-purple-600 selection:text-white transition-colors duration-200">
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-xl sm:px-10 border border-gray-100">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <Link href="/" className="inline-block text-3xl font-black tracking-tighter bg-gradient-to-r from-purple-700 via-indigo-600 to-purple-500 dark:from-white dark:via-slate-200 dark:to-purple-400 bg-clip-text text-transparent">
+          WΛIDE°
+        </Link>
+        <h2 className="mt-2 text-xl font-bold text-slate-800 dark:text-slate-200">
+          Create your AI workforce account
+        </h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          Deploy an AI assistant trained on your products in 5 minutes
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
+        <div className="bg-white dark:bg-[#12141c] py-8 px-6 sm:px-10 shadow-xl rounded-2xl border border-slate-200 dark:border-white/10">
           {error && (
-            <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-3 text-sm text-red-700 rounded">
+            <div className="mb-4 bg-rose-500/10 border border-rose-500/20 p-3 text-sm text-rose-600 dark:text-rose-400 rounded-xl">
               {error}
             </div>
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Your Full Name</label>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Your Full Name</label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-waide-500 focus:outline-none focus:ring-1 focus:ring-waide-500"
+                className="w-full rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                 placeholder="Jane Doe"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Business Name</label>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Business Name</label>
               <input
                 type="text"
                 required
                 value={formData.businessName}
                 onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-waide-500 focus:outline-none focus:ring-1 focus:ring-waide-500"
+                className="w-full rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                 placeholder="Krish Beauty"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email Address</label>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Email Address</label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-waide-500 focus:outline-none focus:ring-1 focus:ring-waide-500"
+                className="w-full rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                 placeholder="owner@krishbeauty.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Password</label>
               <input
                 type="password"
                 required
                 minLength={8}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-waide-500 focus:outline-none focus:ring-1 focus:ring-waide-500"
-                placeholder="Min 8 characters"
+                className="w-full rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                placeholder="Minimum 8 characters"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-waide-600 hover:bg-waide-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-waide-500 disabled:opacity-50 transition-colors"
+              className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-md shadow-purple-600/20 disabled:opacity-50 transition-all hover:scale-[1.01]"
             >
-              {loading ? "Creating account..." : "Start with WΛIDE°"}
+              {loading ? "Creating your assistant..." : "Start with WΛIDE° →"}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-600">
+          <div className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
             Already registered?{" "}
-            <Link href="/auth/login" className="font-medium text-waide-600 hover:text-waide-500">
-              Sign in
+            <Link href="/auth/login" className="font-semibold text-purple-600 dark:text-purple-400 hover:underline">
+              Sign in to your account
             </Link>
           </div>
         </div>
